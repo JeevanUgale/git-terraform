@@ -1,0 +1,30 @@
+provider "github" {
+  token = ""
+}
+
+################################# create a github repo ####################################
+
+resource "github_repository" "repo" {
+  name        = "git-terraform"
+  description = "created a repository from terraform"
+  visibility  = "public"
+  auto_init   = true
+}
+
+############################### create a branch on github ##################################
+
+resource "github_branch" "branch" {
+  repository    = github_repository.repo.name
+  branch        = "terraform"
+  source_branch = "main"
+}
+
+resource "github_repository_file" "new" {
+  repository     = github_repository.repo.name
+  branch         = "main"
+  file           = "git-terraform.txt"
+  content        = file("${path.module}/git-terraform.txt")
+  commit_message = "git.tf file from terraform"
+  commit_author  = "terraform user"
+  commit_email   = "terraform@gmail.com"
+}
